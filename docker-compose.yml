@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:12
+    container_name: db
+    env_file:
+      - ./.env.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  
+  backend:
+    build:
+      dockerfile: dockerization/Dockerfile-server
+    container_name: backend
+    env_file:
+      - ./.env.dev
+    volumes:
+      - migrations:/app/migrations/versions
+      - static_volume:/app/static
+    depends_on:
+      - db
+
+  nginx:
+    build: 
+      dockerfile: dockerization/Dockerfile-balancer
+      context: ./services
+    container_name: nginx
+    restart: on-failure
+    ports:
+      - 81:81
+    volumes:
+      - static_volume:/home/app/web/static
+    depends_on:
+      - backend
+      - db
+
+volumes:
+  postgres_data:
+  static_volume:
+  migrations:
