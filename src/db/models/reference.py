@@ -1,4 +1,3 @@
-import uuid
 from enum import Enum as PyEnum
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Enum
