@@ -19,7 +19,9 @@ services:
       - migrations:/app/migrations/versions
       - static_volume:/app/static
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
 
   nginx:
     build: 
