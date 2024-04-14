@@ -9,7 +9,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     healthcheck:
-      test: ["CMD-SHELL pg_isready -U db-user"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d ShortURL"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
   
   backend:
     build:

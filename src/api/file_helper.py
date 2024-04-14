@@ -1,12 +1,15 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
 
 from api.dependencies import get_user_repository, get_file_repository
 from repository.i_user_repository import IUserRepository
 from repository.i_file_repository import IFileRepository
-from services.file_auth import file_upload
+from services.file_auth import file_upload, get_files, get_file_path
+from core.config import STATIC_DIR
+
 
 router = APIRouter()
 
@@ -33,3 +36,42 @@ async def create_upload_file(
     finally:
         file.file.close()
     return result
+
+@router.get("/get_files", summary="Get all user files info")
+async def get_user_files(
+    token: str = Depends(reuseable_oauth),
+    user_repository: IUserRepository = Depends(get_user_repository),
+    file_repository: IFileRepository = Depends(get_file_repository)
+    ):
+    try:
+        files = await get_files(token, user_repository, file_repository)
+        results = []
+        for file in files:
+            results.append(
+f"""
+"id": {file.id},
+"name": {file.name},
+"created_ad": {file.created_ad},
+"path": {STATIC_DIR}/{file.user_id}/{file.path},
+"size": {file.size},
+"is_downloadable": {file.is_downloadable}
+"""
+            )
+        return {"message": f"Successfully uploaded {results}"}
+    except Exception as e:
+        return {"message": f"There was an error uploading the file {e}"}
+    
+@router.get('/download_file', summary="Download file")
+async def download_file(
+    path: str,
+    filename: str,
+    token: str = Depends(reuseable_oauth),
+    user_repository: IUserRepository = Depends(get_user_repository),
+    file_repository: IFileRepository = Depends(get_file_repository)
+    ):
+    try:
+        path = await get_file_path(token, user_repository, file_repository, path, filename)
+        return FileResponse(path=f"{path}{filename}", filename=filename, media_type='multipart/form-data')
+    except Exception as e:
+        return {"message": f"There was an error uploading the file {e}"}
+    

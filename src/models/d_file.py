@@ -19,3 +19,6 @@ class DFile:
         self.is_downloadable = is_downloadable
         self.created_ad = created_ad
         self.user_id = user_id
+
+    def __str__(self) -> str:
+        return f"{self.path}/{self.name}"

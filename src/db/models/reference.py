@@ -5,11 +5,11 @@ from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from .base import Base
     
+    
 VisibilityType = PyEnum(
     value='VisibilityType',
     names=('private', 'public')
 )
-    
 
 
 class Reference(Base):

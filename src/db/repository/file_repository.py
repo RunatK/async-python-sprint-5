@@ -7,7 +7,7 @@ from sqlalchemy import update
 from sqlalchemy.future import select
 
 from core.config import PG_DSN
-from db.models.file import File
+from db.models.user_file import UserFile
 from models.d_file import DFile
 from db.helpers.file_mapper import to_domain_model
 from repository.i_file_repository import IFileRepository, AddFileDTO, UpdateFileDTO
@@ -17,7 +17,7 @@ class FileRepository(IFileRepository):
     def __init__(self) -> None:
         super().__init__()
         self.engine = create_async_engine(PG_DSN, echo=True, future=True)
-        self._model = File
+        self._model = UserFile
 
     async def get_by_user_id(self, user_id: int) -> Coroutine[Any, Any, list[DFile]]:
         """
@@ -33,7 +33,7 @@ class FileRepository(IFileRepository):
     
     async def add(self, dto: AddFileDTO, *args, **kwargs) -> Coroutine[Any, Any, None]:
         async with AsyncSession(self.engine) as session:
-            file = File(
+            file = UserFile(
                 name = dto.name,
                 path = dto.path,
                 size = dto.size,
