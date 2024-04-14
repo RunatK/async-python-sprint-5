@@ -26,7 +26,7 @@ async def create_upload_file(
     result = {}
     try:
         contents = file.file.read()
-        result = await file_upload(token, user_repository, contents, dir_path, file.filename, file.size)
+        result = await file_upload(token, user_repository, file_repository, contents, dir_path, file.filename, file.size)
     except Exception as e:
         result = {"message": f"There was an error uploading the file {e}"}
         raise e

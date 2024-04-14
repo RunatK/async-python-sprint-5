@@ -15,6 +15,7 @@ COPY ./migrations ./migrations
 COPY ./alembic.ini ./alembic.ini
 COPY ./setup.cfg ./setup.cfg
 
+# Copy entrypoint
 COPY ./src/entrypoint.sh ./entrypoint.sh
 RUN rm ./src/entrypoint.sh
 

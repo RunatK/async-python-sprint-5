@@ -18,7 +18,7 @@ class File(Base):
     is_downloadable = Column(Boolean, default=False)
     created_ad = Column(DateTime, default=datetime.datetime.now())
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship(back_populates="references", lazy="joined")
+    user: Mapped["User"] = relationship(lazy="joined")
 
     def __repr__(self) -> str:
         full_path = pathlib.Path()
